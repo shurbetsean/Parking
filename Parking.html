@@ -538,6 +538,10 @@
             <h2>Find Parking</h2>
             
             <div class="filter-group">
+                <label for="city">City</label>
+                <input type="text" id="city">
+            </div>
+            <div class="filter-group">
                 <label for="search">Find Parking or Events</label>
                 <input type="text" id="search" placeholder="Enter event name, team, or venue">
             </div>
@@ -608,15 +612,21 @@
         const TICKETMASTER_API_KEY = 'gDAsITRFOEaJP77961Zk0OmNZeTqLOlP'; // Replace with your Ticketmaster API key
 
         // Fetch events from Ticketmaster API
-        async function fetchEvents(query = '', category = 'all') {
-            let apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${TICKETMASTER_API_KEY}&size=20&city=Dallas&stateCode=TX&sort=date,asc`;
-            if (query) apiUrl += `&keyword=${encodeURIComponent(query)}`;
+        async function fetchEvents(query = '', category = 'all', city = '', date = '') {
+            let apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${TICKETMASTER_API_KEY}&size=20&sort=date,asc`;
             
-            // Use CORS proxy for development (visit https://cors-anywhere.herokuapp.com/ and click "Request temporary access")
-            const url = `https://cors-anywhere.herokuapp.com/${apiUrl}`;
+            // Parse city
+            const cityParts = city.split(',').map(s => s.trim());
+            if (cityParts[0]) apiUrl += `&city=${encodeURIComponent(cityParts[0])}`;
+            if (cityParts[1]) apiUrl += `&stateCode=${encodeURIComponent(cityParts[1])}`;
+            
+            if (query) apiUrl += `&keyword=${encodeURIComponent(query)}`;
+            if (date) {
+                apiUrl += `&startDateTime=${date}T00:00:00Z&endDateTime=${date}T23:59:59Z`;
+            }
             
             try {
-                const response = await fetch(url);
+                const response = await fetch(apiUrl);
                 const data = await response.json();
                 const apiEvents = data._embedded?.events || [];
                 
@@ -641,6 +651,9 @@
                 // Filter by category if specified
                 const filteredEvents = category === 'all' ? events : events.filter(e => e.category === category);
                 
+                // Update global events
+                currentEvents = filteredEvents;
+                
                 // Update map and lists
                 clearMarkers();
                 filteredEvents.forEach(event => addMarker(event));
@@ -664,6 +677,7 @@
 
         let map;
         let markers = [];
+        let currentEvents = [];
 
         // ============================================
         // SECURITY: Input sanitization functions
@@ -805,10 +819,7 @@
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
 
-            // Add markers for each event
-            events.forEach(event => {
-                addMarker(event);
-            });
+            // Markers will be added after fetching events
         }
 
         // Add marker to map
@@ -891,12 +902,12 @@
         // Book parking function with security validation
         function bookParking(eventId) {
             // SECURITY: Validate input
-            if (typeof eventId !== 'number' || eventId < 1 || eventId > 1000) {
+            if (typeof eventId !== 'string' || !eventId) {
                 console.error('Invalid event ID');
                 return;
             }
 
-            const event = events.find(e => e.id === eventId);
+            const event = currentEvents.find(e => e.id === eventId);
             if (event) {
                 // SECURITY: Use alert for demo only - replace with secure modal/redirect
                 const message = `Booking parking for: ${sanitizeHTML(event.name)}\n\nPrice: $${event.price}\nSpots Available: ${event.spots}\n\nThis would connect to your booking/payment system.`;
@@ -910,19 +921,39 @@
             // Initialize Leaflet Map
             initMap();
             
-            // Load initial events
-            fetchEvents();
-            
             // Search input listener
             document.getElementById('search').addEventListener('input', function(e) {
                 const searchTerm = sanitizeSearchInput(e.target.value);
-                fetchEvents(searchTerm);
+                const city = document.getElementById('city').value;
+                const date = document.getElementById('date').value;
+                fetchEvents(searchTerm, 'all', city, date);
             });
 
             // Category filter
             document.getElementById('category').addEventListener('change', function(e) {
                 const category = e.target.value;
-                fetchEvents('', category);
+                const searchTerm = document.getElementById('search').value;
+                const city = document.getElementById('city').value;
+                const date = document.getElementById('date').value;
+                fetchEvents(searchTerm, category, city, date);
+            });
+
+            // City input listener
+            document.getElementById('city').addEventListener('input', function(e) {
+                const city = e.target.value;
+                const searchTerm = document.getElementById('search').value;
+                const category = document.getElementById('category').value;
+                const date = document.getElementById('date').value;
+                fetchEvents(searchTerm, category, city, date);
+            });
+
+            // Date input listener
+            document.getElementById('date').addEventListener('change', function(e) {
+                const date = e.target.value;
+                const searchTerm = document.getElementById('search').value;
+                const category = document.getElementById('category').value;
+                const city = document.getElementById('city').value;
+                fetchEvents(searchTerm, category, city, date);
             });
         });
     </script>
