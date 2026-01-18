@@ -10,6 +10,8 @@
     <!-- Referrer-Policy: strict-origin-when-cross-origin -->
     <!-- Permissions-Policy: geolocation=(), microphone=(), camera=() -->
     <title>Event Parking USA - Premium Parking Solutions</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         * {
             margin: 0;
@@ -18,17 +20,17 @@
         }
 
         :root {
-            --dallas-navy: #003594;
-            --dallas-silver: #869397;
-            --dallas-white: #ffffff;
-            --dallas-light-blue: #0047BB;
-            --accent-green: #00854D;
+            --dallas-navy: #001122;
+            --dallas-silver: #555555;
+            --dallas-white: #f0f0f0;
+            --dallas-light-blue: #003366;
+            --accent-green: #004422;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #333;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #e0e0e0;
         }
 
         /* Header */
@@ -36,7 +38,7 @@
             background: linear-gradient(135deg, var(--dallas-navy) 0%, var(--dallas-light-blue) 100%);
             color: var(--dallas-white);
             padding: 20px 0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
         }
 
         .header-content {
@@ -79,8 +81,8 @@
         }
 
         .nav-btn:hover {
-            background: white;
-            color: var(--dallas-navy);
+            background: var(--dallas-light-blue);
+            color: var(--dallas-white);
         }
 
         /* Main Container */
@@ -95,15 +97,15 @@
 
         /* Sidebar */
         .sidebar {
-            background: white;
+            background: #2a2a2a;
             border-radius: 10px;
             padding: 25px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
             height: fit-content;
         }
 
         .sidebar h2 {
-            color: var(--dallas-navy);
+            color: var(--dallas-white);
             margin-bottom: 20px;
             font-size: 22px;
             border-bottom: 3px solid var(--dallas-silver);
@@ -116,7 +118,7 @@
 
         .filter-group label {
             display: block;
-            color: var(--dallas-navy);
+            color: var(--dallas-white);
             font-weight: 600;
             margin-bottom: 8px;
         }
@@ -133,7 +135,7 @@
         .filter-group input:focus,
         .filter-group select:focus {
             outline: none;
-            border-color: var(--dallas-navy);
+            border-color: var(--dallas-light-blue);
         }
 
         /* Event Cards */
@@ -144,7 +146,7 @@
         }
 
         .event-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
             border: 2px solid var(--dallas-silver);
             border-radius: 8px;
             padding: 15px;
@@ -152,25 +154,25 @@
             cursor: pointer;
             transition: all 0.3s;
             transform: translateY(-3px) rotateX(2deg);
-            box-shadow: 0 8px 25px rgba(0,53,148,0.15), 0 4px 10px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 4px 10px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
             transform-style: preserve-3d;
         }
 
         .event-card:hover {
             transform: translateY(-8px) rotateX(5deg) scale(1.02);
-            box-shadow: 0 15px 35px rgba(0,53,148,0.25), 0 8px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.9);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7), 0 8px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
             border-color: var(--dallas-navy);
         }
 
         .event-title {
-            color: var(--dallas-navy);
+            color: var(--dallas-white);
             font-weight: bold;
             font-size: 16px;
             margin-bottom: 5px;
         }
 
         .event-details {
-            color: #666;
+            color: #cccccc;
             font-size: 13px;
             margin: 5px 0;
         }
@@ -184,10 +186,10 @@
 
         /* Map Container */
         .map-container {
-            background: white;
+            background: #2a2a2a;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
         }
 
         .map-header {
@@ -198,7 +200,7 @@
         }
 
         .map-header h2 {
-            color: var(--dallas-navy);
+            color: var(--dallas-white);
             font-size: 22px;
         }
 
@@ -208,8 +210,8 @@
         }
 
         .toggle-btn {
-            background: white;
-            color: var(--dallas-navy);
+            background: #3a3a3a;
+            color: var(--dallas-white);
             border: 2px solid var(--dallas-navy);
             padding: 8px 16px;
             border-radius: 5px;
@@ -242,13 +244,13 @@
         }
 
         .section-header h2 {
-            color: var(--dallas-navy);
+            color: var(--dallas-white);
             font-size: 36px;
             margin-bottom: 10px;
         }
 
         .section-header p {
-            color: #666;
+            color: #cccccc;
             font-size: 16px;
         }
 
@@ -260,20 +262,20 @@
         }
 
         .event-card-full {
-            background: white;
+            background: #2a2a2a;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
             transition: all 0.3s;
             border: 2px solid transparent;
             transform: translateY(-5px) rotateX(3deg);
-            box-shadow: 0 12px 30px rgba(0,53,148,0.2), 0 6px 15px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.7), 0 6px 15px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
             transform-style: preserve-3d;
         }
 
         .event-card-full:hover {
             transform: translateY(-12px) rotateX(6deg) scale(1.03);
-            box-shadow: 0 20px 40px rgba(0,53,148,0.3), 0 12px 25px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.9);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 12px 25px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.2);
             border-color: var(--dallas-navy);
         }
 
@@ -305,7 +307,7 @@
         }
 
         .event-card-title {
-            color: var(--dallas-navy);
+            color: var(--dallas-white);
             font-size: 20px;
             font-weight: bold;
             margin-bottom: 12px;
@@ -323,12 +325,12 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #666;
+            color: #cccccc;
             font-size: 14px;
         }
 
         .event-info-icon {
-            color: var(--dallas-navy);
+            color: var(--dallas-light-blue);
             font-weight: bold;
         }
 
@@ -337,7 +339,7 @@
             justify-content: space-between;
             align-items: center;
             padding-top: 15px;
-            border-top: 1px solid #e0e0e0;
+            border-top: 1px solid #555;
         }
 
         .event-price-tag {
@@ -348,7 +350,7 @@
 
         .event-price-label {
             font-size: 12px;
-            color: #666;
+            color: #cccccc;
         }
 
         .reserve-btn {
@@ -368,11 +370,11 @@
         }
 
         .spots-available {
-            background: #f0f0f0;
+            background: #1a1a1a;
             padding: 8px 12px;
             border-radius: 6px;
             font-size: 13px;
-            color: #666;
+            color: #cccccc;
             margin-top: 10px;
         }
 
@@ -392,21 +394,21 @@
         }
 
         .stat-card {
-            background: white;
+            background: #2a2a2a;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
             text-align: center;
             border-top: 4px solid var(--dallas-navy);
             transform: translateY(-2px) rotateX(1deg);
-            box-shadow: 0 6px 15px rgba(0,53,148,0.1), 0 3px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.5), 0 3px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
             transform-style: preserve-3d;
             transition: all 0.3s;
         }
 
         .stat-card:hover {
             transform: translateY(-6px) rotateX(3deg) scale(1.02);
-            box-shadow: 0 12px 25px rgba(0,53,148,0.2), 0 6px 15px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.9);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.7), 0 6px 15px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2);
         }
 
         .stat-number {
@@ -416,7 +418,7 @@
         }
 
         .stat-label {
-            color: #666;
+            color: #cccccc;
             margin-top: 5px;
             font-size: 14px;
         }
@@ -427,7 +429,7 @@
         }
 
         .popup-title {
-            color: var(--dallas-navy);
+            color: var(--dallas-white);
             font-weight: bold;
             font-size: 16px;
             margin-bottom: 8px;
@@ -435,7 +437,7 @@
 
         .popup-details {
             font-size: 13px;
-            color: #666;
+            color: #cccccc;
             margin: 4px 0;
         }
 
@@ -469,7 +471,7 @@
         }
 
         .events-list::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: #1a1a1a;
             border-radius: 10px;
         }
 
@@ -607,16 +609,7 @@
         // SECURE: API key should be loaded from server-side environment variable
         // NEVER expose API keys in client-side code
         // ============================================
-        const GOOGLE_MAPS_API_KEY = null; // Set to null for security - load from secure endpoint
-        
-        // Load Google Maps API
-        function loadGoogleMaps() {
-            const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-        }
+        // Note: Using Leaflet for free interactive maps
 
         // Sample event data - Replace with your actual data source // TODO: Replace with real data
         const events = [
@@ -630,25 +623,23 @@
                 lat: 32.7479,
                 lng: -97.0945,
                 price: 45,
-                spots: 250,
-                icon: "🏈"
+                spots: 250
             },
             {
                 id: 2,
-                name: "Beyoncé Renaissance World Tour",
-                location: "Houston, TX",
-                venue: "NRG Stadium",
+                name: "Dallas Mavericks vs Phoenix Suns",
+                location: "Dallas, TX",
+                venue: "American Airlines Center",
                 date: "2025-11-20",
-                category: "concert",
-                lat: 29.6847,
-                lng: -95.4107,
+                category: "sports",
+                lat: 32.7905,
+                lng: -96.8103,
                 price: 35,
-                spots: 180,
-                icon: "🎤"
+                spots: 180
             },
             {
                 id: 3,
-                name: "NBA Finals Game 3",
+                name: "Dallas Mavericks vs Boston Celtics",
                 location: "Dallas, TX",
                 venue: "American Airlines Center",
                 date: "2025-12-01",
@@ -656,21 +647,19 @@
                 lat: 32.7905,
                 lng: -96.8103,
                 price: 40,
-                spots: 300,
-                icon: "🏀"
+                spots: 300
             },
             {
                 id: 4,
-                name: "Austin City Limits Music Festival",
-                location: "Austin, TX",
-                venue: "Zilker Park",
+                name: "Texas Rangers vs Seattle Mariners",
+                location: "Arlington, TX",
+                venue: "Globe Life Field",
                 date: "2025-11-25",
-                category: "festival",
-                lat: 30.2672,
-                lng: -97.7431,
+                category: "sports",
+                lat: 32.7473,
+                lng: -97.0842,
                 price: 25,
-                spots: 500,
-                icon: "🎸"
+                spots: 500
             },
             {
                 id: 5,
@@ -682,8 +671,7 @@
                 lat: 34.0430,
                 lng: -118.2673,
                 price: 50,
-                spots: 200,
-                icon: "🏀"
+                spots: 200
             },
             {
                 id: 6,
@@ -695,21 +683,19 @@
                 lat: 25.7907,
                 lng: -80.1300,
                 price: 30,
-                spots: 400,
-                icon: "🎨"
+                spots: 400
             },
             {
                 id: 7,
-                name: "Chicago Bears vs Green Bay Packers",
-                location: "Chicago, IL",
-                venue: "Soldier Field",
+                name: "Dallas Cowboys vs Chicago Bears",
+                location: "Dallas, TX",
+                venue: "AT&T Stadium",
                 date: "2025-11-22",
                 category: "sports",
-                lat: 41.8623,
-                lng: -87.6167,
+                lat: 32.7479,
+                lng: -97.0945,
                 price: 38,
-                spots: 220,
-                icon: "🏈"
+                spots: 220
             },
             {
                 id: 8,
@@ -721,21 +707,19 @@
                 lat: 37.7844,
                 lng: -122.4015,
                 price: 28,
-                spots: 350,
-                icon: "💻"
+                spots: 350
             },
             {
                 id: 9,
-                name: "New York Yankees vs Red Sox",
-                location: "New York, NY",
-                venue: "Yankee Stadium",
+                name: "Texas Rangers vs New York Yankees",
+                location: "Arlington, TX",
+                venue: "Globe Life Field",
                 date: "2025-11-16",
                 category: "sports",
-                lat: 40.8296,
-                lng: -73.9262,
+                lat: 32.7473,
+                lng: -97.0842,
                 price: 55,
-                spots: 175,
-                icon: "⚾"
+                spots: 175
             },
             {
                 id: 10,
@@ -747,8 +731,7 @@
                 lat: 36.1665,
                 lng: -86.7713,
                 price: 42,
-                spots: 280,
-                icon: "🎤"
+                spots: 280
             },
             {
                 id: 11,
@@ -760,8 +743,7 @@
                 lat: 47.5952,
                 lng: -122.3316,
                 price: 48,
-                spots: 190,
-                icon: "🏈"
+                spots: 190
             },
             {
                 id: 12,
@@ -773,8 +755,7 @@
                 lat: 33.7850,
                 lng: -84.3733,
                 price: 32,
-                spots: 450,
-                icon: "🎵"
+                spots: 450
             }
         ];
 
@@ -805,7 +786,7 @@
                 // Full card structure
                 const imageDiv = document.createElement('div');
                 imageDiv.className = 'event-image';
-                imageDiv.textContent = event.icon;
+                imageDiv.textContent = 'Event';
                 card.appendChild(imageDiv);
 
                 const contentDiv = document.createElement('div');
@@ -828,7 +809,7 @@
                 locationItem.className = 'event-info-item';
                 const locationIcon = document.createElement('span');
                 locationIcon.className = 'event-info-icon';
-                locationIcon.textContent = '📍';
+                locationIcon.textContent = 'LOC';
                 const locationText = document.createElement('span');
                 locationText.textContent = `${event.venue}, ${event.location}`;
                 locationItem.appendChild(locationIcon);
@@ -839,7 +820,7 @@
                 dateItem.className = 'event-info-item';
                 const dateIcon = document.createElement('span');
                 dateIcon.className = 'event-info-icon';
-                dateIcon.textContent = '📅';
+                dateIcon.textContent = 'DATE';
                 const dateText = document.createElement('span');
                 dateText.textContent = new Date(event.date).toLocaleDateString('en-US', {
                     weekday: 'short',
@@ -891,10 +872,10 @@
                 // Sidebar card structure
                 const titleDiv = document.createElement('div');
                 titleDiv.className = 'event-title';
-                titleDiv.textContent = `${event.icon} ${event.name}`;
+                titleDiv.textContent = event.name;
                 card.appendChild(titleDiv);
 
-                ['📍 ' + event.location, '📅 ' + new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), '🚗 ' + event.spots + ' spots available'].forEach(detail => {
+                ['Location: ' + event.location, 'Date: ' + new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), 'Spots: ' + event.spots + ' available'].forEach(detail => {
                     const detailDiv = document.createElement('div');
                     detailDiv.className = 'event-details';
                     detailDiv.textContent = detail;
@@ -910,25 +891,16 @@
             return card;
         }
 
-        // Initialize Google Map
+        // Initialize Leaflet Map
         function initMap() {
             // Center on Dallas, TX
-            const center = { lat: 32.7767, lng: -96.7970 };
+            const center = [32.7767, -96.7970];
             
-            map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 5,
-                center: center,
-                styles: [
-                    {
-                        featureType: 'poi',
-                        elementType: 'labels',
-                        stylers: [{ visibility: 'off' }]
-                    }
-                ],
-                mapTypeControl: true,
-                streetViewControl: false,
-                fullscreenControl: true
-            });
+            map = L.map('map').setView(center, 5);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
 
             // Add markers for each event
             events.forEach(event => {
@@ -938,48 +910,32 @@
 
         // Add marker to map
         function addMarker(event) {
-            const marker = new google.maps.Marker({
-                position: { lat: event.lat, lng: event.lng },
-                map: map,
-                title: event.name,
-                icon: {
-                    path: google.maps.SymbolPath.CIRCLE,
-                    scale: 12,
-                    fillColor: '#003594',
-                    fillOpacity: 1,
-                    strokeColor: '#ffffff',
-                    strokeWeight: 3
-                }
-            });
+            const marker = L.marker([event.lat, event.lng]).addTo(map);
 
-            const infoWindow = new google.maps.InfoWindow({
-                content: `
-                    <div style="padding: 10px; max-width: 250px;">
-                        <div style="color: #003594; font-weight: bold; font-size: 16px; margin-bottom: 8px;">
-                            ${event.name}
-                        </div>
-                        <div style="font-size: 13px; color: #666; margin: 4px 0;">
-                            📍 ${event.venue}
-                        </div>
-                        <div style="font-size: 13px; color: #666; margin: 4px 0;">
-                            📅 ${new Date(event.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                        </div>
-                        <div style="font-size: 13px; color: #666; margin: 4px 0;">
-                            🚗 ${event.spots} spots available
-                        </div>
-                        <div style="color: #00854D; font-weight: bold; font-size: 20px; margin-top: 10px;">
-                            $${event.price}
-                        </div>
-                        <button onclick="bookParking(${event.id})" style="background: #003594; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; margin-top: 10px; width: 100%;">
-                            Reserve Parking
-                        </button>
+            const popupContent = `
+                <div style="padding: 10px; max-width: 250px;">
+                    <div style="color: #001122; font-weight: bold; font-size: 16px; margin-bottom: 8px;">
+                        ${event.name}
                     </div>
-                `
-            });
+                    <div style="font-size: 13px; color: #cccccc; margin: 4px 0;">
+                        Venue: ${event.venue}
+                    </div>
+                    <div style="font-size: 13px; color: #cccccc; margin: 4px 0;">
+                        Date: ${new Date(event.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                    </div>
+                    <div style="font-size: 13px; color: #cccccc; margin: 4px 0;">
+                        Spots: ${event.spots} available
+                    </div>
+                    <div style="color: #004422; font-weight: bold; font-size: 20px; margin-top: 10px;">
+                        $${event.price}
+                    </div>
+                    <button onclick="bookParking(${event.id})" style="background: #001122; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; margin-top: 10px; width: 100%;">
+                        Reserve Parking
+                    </button>
+                </div>
+            `;
 
-            marker.addListener('click', () => {
-                infoWindow.open(map, marker);
-            });
+            marker.bindPopup(popupContent);
 
             markers.push(marker);
         }
@@ -1009,8 +965,7 @@
         // Zoom to specific event location
         function zoomToEvent(lat, lng) {
             if (map) {
-                map.setCenter({ lat, lng });
-                map.setZoom(13);
+                map.setView([lat, lng], 13);
                 
                 // Scroll to map
                 document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1024,11 +979,9 @@
             event.target.classList.add('active');
             
             if (view === 'all') {
-                map.setCenter({ lat: 32.7767, lng: -96.7970 });
-                map.setZoom(5);
+                map.setView([32.7767, -96.7970], 5);
             } else {
-                map.setCenter({ lat: 32.7767, lng: -96.7970 });
-                map.setZoom(10);
+                map.setView([32.7767, -96.7970], 10);
             }
         }
 
@@ -1054,22 +1007,8 @@
             populateEventsList();
             populateEventsGrid();
             
-            // Load Google Maps
-            if (GOOGLE_MAPS_API_KEY !== 'YOUR_API_KEY_HERE') {
-                loadGoogleMaps();
-            } else {
-                // Display message on map div
-                document.getElementById('map').innerHTML = `
-                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #f0f0f0; border-radius: 8px;">
-                        <div style="text-align: center; padding: 40px;">
-                            <h3 style="color: #003594; margin-bottom: 15px;">Google Maps API Key Required</h3>
-                            <p style="color: #666; margin-bottom: 10px;">Please add your Google Maps API key to activate the map.</p>
-                            <p style="color: #999; font-size: 14px;">Edit line 172 in the HTML file and replace 'YOUR_API_KEY_HERE' with your actual API key.</p>
-                            <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank" style="color: #003594; text-decoration: underline; font-size: 14px;">Get API Key</a>
-                        </div>
-                    </div>
-                `;
-            }
+            // Initialize Leaflet Map
+            initMap();
             
             // Search input listener with security
             document.getElementById('search').addEventListener('input', function(e) {
@@ -1108,5 +1047,7 @@
             });
         });
     </script>
+</body>
+</html>
 </body>
 </html>
