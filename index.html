@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SECURITY: Add these headers to your server configuration -->
+    <!-- Content-Security-Policy: default-src 'self'; script-src 'self' https://maps.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.googleapis.com https://*.gstatic.com; connect-src 'self' https://maps.googleapis.com; -->
+    <!-- X-Frame-Options: DENY -->
+    <!-- X-Content-Type-Options: nosniff -->
+    <!-- Referrer-Policy: strict-origin-when-cross-origin -->
+    <!-- Permissions-Policy: geolocation=(), microphone=(), camera=() -->
+    <title>Event Parking USA - Premium Parking Solutions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dallas-navy: #003594;
+            --dallas-silver: #869397;
+            --dallas-white: #ffffff;
+            --dallas-light-blue: #0047BB;
+            --accent-green: #00854D;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--dallas-navy) 0%, var(--dallas-light-blue) 100%);
+            color: var(--dallas-white);
+            padding: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-star {
+            font-size: 32px;
+            color: var(--dallas-silver);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: white;
+            color: var(--dallas-navy);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .sidebar h2 {
+            color: var(--dallas-navy);
+            margin-bottom: 20px;
+            font-size: 22px;
+            border-bottom: 3px solid var(--dallas-silver);
+            padding-bottom: 10px;
+        }
+
+        .filter-group {
+            margin-bottom: 20px;
+        }
+
+        .filter-group label {
+            display: block;
+            color: var(--dallas-navy);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--dallas-silver);
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--dallas-navy);
+        }
+
+        /* Event Cards */
+        .events-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+
+        .event-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border: 2px solid var(--dallas-silver);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            transform: translateY(-3px) rotateX(2deg);
+            box-shadow: 0 8px 25px rgba(0,53,148,0.15), 0 4px 10px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8);
+            transform-style: preserve-3d;
+        }
+
+        .event-card:hover {
+            transform: translateY(-8px) rotateX(5deg) scale(1.02);
+            box-shadow: 0 15px 35px rgba(0,53,148,0.25), 0 8px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.9);
+            border-color: var(--dallas-navy);
+        }
+
+        .event-title {
+            color: var(--dallas-navy);
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .event-details {
+            color: #666;
+            font-size: 13px;
+            margin: 5px 0;
+        }
+
+        .event-price {
+            color: var(--accent-green);
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 8px;
+        }
+
+        /* Map Container */
+        .map-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .map-header h2 {
+            color: var(--dallas-navy);
+            font-size: 22px;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 10px;
+        }
+
+        .toggle-btn {
+            background: white;
+            color: var(--dallas-navy);
+            border: 2px solid var(--dallas-navy);
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .toggle-btn.active {
+            background: var(--dallas-navy);
+            color: white;
+        }
+
+        #map {
+            height: 600px;
+            border-radius: 8px;
+            border: 2px solid var(--dallas-silver);
+        }
+
+        /* Events Section */
+        .events-section {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .section-header h2 {
+            color: var(--dallas-navy);
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .section-header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .event-card-full {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            transform: translateY(-5px) rotateX(3deg);
+            box-shadow: 0 12px 30px rgba(0,53,148,0.2), 0 6px 15px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.8);
+            transform-style: preserve-3d;
+        }
+
+        .event-card-full:hover {
+            transform: translateY(-12px) rotateX(6deg) scale(1.03);
+            box-shadow: 0 20px 40px rgba(0,53,148,0.3), 0 12px 25px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.9);
+            border-color: var(--dallas-navy);
+        }
+
+        .event-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, var(--dallas-navy) 0%, var(--dallas-light-blue) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        .event-content {
+            padding: 20px;
+        }
+
+        .event-category {
+            display: inline-block;
+            background: var(--dallas-light-blue);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .event-card-title {
+            color: var(--dallas-navy);
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .event-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .event-info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .event-info-icon {
+            color: var(--dallas-navy);
+            font-weight: bold;
+        }
+
+        .event-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .event-price-tag {
+            color: var(--accent-green);
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .event-price-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .reserve-btn {
+            background: var(--dallas-navy);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .reserve-btn:hover {
+            background: var(--dallas-light-blue);
+            transform: scale(1.05);
+        }
+
+        .spots-available {
+            background: #f0f0f0;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .spots-number {
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            max-width: 1400px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+            border-top: 4px solid var(--dallas-navy);
+            transform: translateY(-2px) rotateX(1deg);
+            box-shadow: 0 6px 15px rgba(0,53,148,0.1), 0 3px 8px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+            transform-style: preserve-3d;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px) rotateX(3deg) scale(1.02);
+            box-shadow: 0 12px 25px rgba(0,53,148,0.2), 0 6px 15px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.9);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--dallas-navy);
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        /* Custom Marker Popup */
+        .leaflet-popup-content {
+            margin: 15px;
+        }
+
+        .popup-title {
+            color: var(--dallas-navy);
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .popup-details {
+            font-size: 13px;
+            color: #666;
+            margin: 4px 0;
+        }
+
+        .popup-price {
+            color: var(--accent-green);
+            font-weight: bold;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        .book-btn {
+            background: var(--dallas-navy);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 10px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .book-btn:hover {
+            background: var(--dallas-light-blue);
+        }
+
+        /* Scrollbar Styling */
+        .events-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .events-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .events-list::-webkit-scrollbar-thumb {
+            background: var(--dallas-silver);
+            border-radius: 10px;
+        }
+
+        .events-list::-webkit-scrollbar-thumb:hover {
+            background: var(--dallas-navy);
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-star">★</span>
+                <span>Event Parking USA</span>
+            </div>
+            <div class="nav-buttons">
+                <button class="nav-btn">Sign In</button>
+                <button class="nav-btn">List Your Parking</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Bar -->
+    <div class="stats-bar">
+        <div class="stat-card">
+            <div class="stat-number">2,847</div>
+            <div class="stat-label">Active Events</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">12,503</div>
+            <div class="stat-label">Parking Spots</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">50</div>
+            <div class="stat-label">States Covered</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">$15</div>
+            <div class="stat-label">Avg. Price</div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>Find Parking</h2>
+            
+            <div class="filter-group">
+                <label for="search">Search Events or Location</label>
+                <input type="text" id="search" placeholder="Dallas, TX or Cowboys Game">
+            </div>
+
+            <div class="filter-group">
+                <label for="date">Event Date</label>
+                <input type="date" id="date">
+            </div>
+
+            <div class="filter-group">
+                <label for="category">Event Category</label>
+                <select id="category">
+                    <option value="all">All Categories</option>
+                    <option value="sports">Sports</option>
+                    <option value="concert">Concerts</option>
+                    <option value="festival">Festivals</option>
+                    <option value="conference">Conferences</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="price">Max Price</label>
+                <select id="price">
+                    <option value="all">Any Price</option>
+                    <option value="10">Under $10</option>
+                    <option value="20">Under $20</option>
+                    <option value="30">Under $30</option>
+                    <option value="50">Under $50</option>
+                </select>
+            </div>
+
+            <h2 style="margin-top: 30px;">Upcoming Events</h2>
+            <div class="events-list" id="eventsList">
+                <!-- Events will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Map Container -->
+        <div class="map-container">
+            <div class="map-header">
+                <h2>Event & Parking Locations</h2>
+                <div class="view-toggle">
+                    <button class="toggle-btn active" onclick="setMapView('all')">All Events</button>
+                    <button class="toggle-btn" onclick="setMapView('nearby')">Nearby</button>
+                </div>
+            </div>
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <!-- Events Section -->
+    <div class="events-section">
+        <div class="section-header">
+            <h2>Featured Events</h2>
+            <p>Reserve parking for the hottest events across the United States</p>
+        </div>
+        <div class="events-grid" id="eventsGrid">
+            <!-- Events will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // SECURE: API key should be loaded from server-side environment variable
+        // NEVER expose API keys in client-side code
+        // ============================================
+        const GOOGLE_MAPS_API_KEY = null; // Set to null for security - load from secure endpoint
+        
+        // Load Google Maps API
+        function loadGoogleMaps() {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        // Sample event data - Replace with your actual data source // TODO: Replace with real data
+        const events = [
+            {
+                id: 1,
+                name: "Dallas Cowboys vs Philadelphia Eagles",
+                location: "Dallas, TX",
+                venue: "AT&T Stadium",
+                date: "2025-11-15",
+                category: "sports",
+                lat: 32.7479,
+                lng: -97.0945,
+                price: 45,
+                spots: 250,
+                icon: "🏈"
+            },
+            {
+                id: 2,
+                name: "Beyoncé Renaissance World Tour",
+                location: "Houston, TX",
+                venue: "NRG Stadium",
+                date: "2025-11-20",
+                category: "concert",
+                lat: 29.6847,
+                lng: -95.4107,
+                price: 35,
+                spots: 180,
+                icon: "🎤"
+            },
+            {
+                id: 3,
+                name: "NBA Finals Game 3",
+                location: "Dallas, TX",
+                venue: "American Airlines Center",
+                date: "2025-12-01",
+                category: "sports",
+                lat: 32.7905,
+                lng: -96.8103,
+                price: 40,
+                spots: 300,
+                icon: "🏀"
+            },
+            {
+                id: 4,
+                name: "Austin City Limits Music Festival",
+                location: "Austin, TX",
+                venue: "Zilker Park",
+                date: "2025-11-25",
+                category: "festival",
+                lat: 30.2672,
+                lng: -97.7431,
+                price: 25,
+                spots: 500,
+                icon: "🎸"
+            },
+            {
+                id: 5,
+                name: "LA Lakers vs Golden State Warriors",
+                location: "Los Angeles, CA",
+                venue: "Crypto.com Arena",
+                date: "2025-11-18",
+                category: "sports",
+                lat: 34.0430,
+                lng: -118.2673,
+                price: 50,
+                spots: 200,
+                icon: "🏀"
+            },
+            {
+                id: 6,
+                name: "Miami Art Basel Week",
+                location: "Miami, FL",
+                venue: "Miami Beach Convention Center",
+                date: "2025-12-05",
+                category: "festival",
+                lat: 25.7907,
+                lng: -80.1300,
+                price: 30,
+                spots: 400,
+                icon: "🎨"
+            },
+            {
+                id: 7,
+                name: "Chicago Bears vs Green Bay Packers",
+                location: "Chicago, IL",
+                venue: "Soldier Field",
+                date: "2025-11-22",
+                category: "sports",
+                lat: 41.8623,
+                lng: -87.6167,
+                price: 38,
+                spots: 220,
+                icon: "🏈"
+            },
+            {
+                id: 8,
+                name: "TechCrunch Disrupt 2025",
+                location: "San Francisco, CA",
+                venue: "Moscone Center",
+                date: "2025-12-10",
+                category: "conference",
+                lat: 37.7844,
+                lng: -122.4015,
+                price: 28,
+                spots: 350,
+                icon: "💻"
+            },
+            {
+                id: 9,
+                name: "New York Yankees vs Red Sox",
+                location: "New York, NY",
+                venue: "Yankee Stadium",
+                date: "2025-11-16",
+                category: "sports",
+                lat: 40.8296,
+                lng: -73.9262,
+                price: 55,
+                spots: 175,
+                icon: "⚾"
+            },
+            {
+                id: 10,
+                name: "Taylor Swift Eras Tour",
+                location: "Nashville, TN",
+                venue: "Nissan Stadium",
+                date: "2025-11-28",
+                category: "concert",
+                lat: 36.1665,
+                lng: -86.7713,
+                price: 42,
+                spots: 280,
+                icon: "🎤"
+            },
+            {
+                id: 11,
+                name: "Seattle Seahawks vs 49ers",
+                location: "Seattle, WA",
+                venue: "Lumen Field",
+                date: "2025-12-03",
+                category: "sports",
+                lat: 47.5952,
+                lng: -122.3316,
+                price: 48,
+                spots: 190,
+                icon: "🏈"
+            },
+            {
+                id: 12,
+                name: "Atlanta Music Midtown",
+                location: "Atlanta, GA",
+                venue: "Piedmont Park",
+                date: "2025-11-30",
+                category: "festival",
+                lat: 33.7850,
+                lng: -84.3733,
+                price: 32,
+                spots: 450,
+                icon: "🎵"
+            }
+        ];
+
+        let map;
+        let markers = [];
+
+        // ============================================
+        // SECURITY: Input sanitization functions
+        // ============================================
+        function sanitizeHTML(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function sanitizeSearchInput(input) {
+            // Remove potentially dangerous characters and limit length
+            return input.replace(/[<>'"&]/g, '').substring(0, 100);
+        }
+
+        function createEventCard(event, isFull = false) {
+            // Use createElement for security instead of innerHTML with template literals
+            const card = document.createElement('div');
+            card.className = isFull ? 'event-card-full' : 'event-card';
+            card.onclick = () => zoomToEvent(event.lat, event.lng);
+
+            if (isFull) {
+                // Full card structure
+                const imageDiv = document.createElement('div');
+                imageDiv.className = 'event-image';
+                imageDiv.textContent = event.icon;
+                card.appendChild(imageDiv);
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'event-content';
+
+                const categorySpan = document.createElement('span');
+                categorySpan.className = 'event-category';
+                categorySpan.textContent = event.category;
+                contentDiv.appendChild(categorySpan);
+
+                const title = document.createElement('h3');
+                title.className = 'event-card-title';
+                title.textContent = event.name;
+                contentDiv.appendChild(title);
+
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'event-info';
+
+                const locationItem = document.createElement('div');
+                locationItem.className = 'event-info-item';
+                const locationIcon = document.createElement('span');
+                locationIcon.className = 'event-info-icon';
+                locationIcon.textContent = '📍';
+                const locationText = document.createElement('span');
+                locationText.textContent = `${event.venue}, ${event.location}`;
+                locationItem.appendChild(locationIcon);
+                locationItem.appendChild(locationText);
+                infoDiv.appendChild(locationItem);
+
+                const dateItem = document.createElement('div');
+                dateItem.className = 'event-info-item';
+                const dateIcon = document.createElement('span');
+                dateIcon.className = 'event-info-icon';
+                dateIcon.textContent = '📅';
+                const dateText = document.createElement('span');
+                dateText.textContent = new Date(event.date).toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+                dateItem.appendChild(dateIcon);
+                dateItem.appendChild(dateText);
+                infoDiv.appendChild(dateItem);
+
+                contentDiv.appendChild(infoDiv);
+
+                const spotsDiv = document.createElement('div');
+                spotsDiv.className = 'spots-available';
+                const spotsSpan = document.createElement('span');
+                spotsSpan.className = 'spots-number';
+                spotsSpan.textContent = event.spots;
+                spotsDiv.appendChild(spotsSpan);
+                spotsDiv.appendChild(document.createTextNode(' parking spots available'));
+                contentDiv.appendChild(spotsDiv);
+
+                const footerDiv = document.createElement('div');
+                footerDiv.className = 'event-footer';
+
+                const priceDiv = document.createElement('div');
+                const priceTag = document.createElement('div');
+                priceTag.className = 'event-price-tag';
+                priceTag.textContent = `$${event.price}`;
+                const priceLabel = document.createElement('div');
+                priceLabel.className = 'event-price-label';
+                priceLabel.textContent = 'per spot';
+                priceDiv.appendChild(priceTag);
+                priceDiv.appendChild(priceLabel);
+                footerDiv.appendChild(priceDiv);
+
+                const button = document.createElement('button');
+                button.className = 'reserve-btn';
+                button.textContent = 'Reserve Now';
+                button.onclick = (e) => {
+                    e.stopPropagation();
+                    bookParking(event.id);
+                };
+                footerDiv.appendChild(button);
+
+                contentDiv.appendChild(footerDiv);
+                card.appendChild(contentDiv);
+            } else {
+                // Sidebar card structure
+                const titleDiv = document.createElement('div');
+                titleDiv.className = 'event-title';
+                titleDiv.textContent = `${event.icon} ${event.name}`;
+                card.appendChild(titleDiv);
+
+                ['📍 ' + event.location, '📅 ' + new Date(event.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), '🚗 ' + event.spots + ' spots available'].forEach(detail => {
+                    const detailDiv = document.createElement('div');
+                    detailDiv.className = 'event-details';
+                    detailDiv.textContent = detail;
+                    card.appendChild(detailDiv);
+                });
+
+                const priceDiv = document.createElement('div');
+                priceDiv.className = 'event-price';
+                priceDiv.textContent = `$${event.price}`;
+                card.appendChild(priceDiv);
+            }
+
+            return card;
+        }
+
+        // Initialize Google Map
+        function initMap() {
+            // Center on Dallas, TX
+            const center = { lat: 32.7767, lng: -96.7970 };
+            
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 5,
+                center: center,
+                styles: [
+                    {
+                        featureType: 'poi',
+                        elementType: 'labels',
+                        stylers: [{ visibility: 'off' }]
+                    }
+                ],
+                mapTypeControl: true,
+                streetViewControl: false,
+                fullscreenControl: true
+            });
+
+            // Add markers for each event
+            events.forEach(event => {
+                addMarker(event);
+            });
+        }
+
+        // Add marker to map
+        function addMarker(event) {
+            const marker = new google.maps.Marker({
+                position: { lat: event.lat, lng: event.lng },
+                map: map,
+                title: event.name,
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 12,
+                    fillColor: '#003594',
+                    fillOpacity: 1,
+                    strokeColor: '#ffffff',
+                    strokeWeight: 3
+                }
+            });
+
+            const infoWindow = new google.maps.InfoWindow({
+                content: `
+                    <div style="padding: 10px; max-width: 250px;">
+                        <div style="color: #003594; font-weight: bold; font-size: 16px; margin-bottom: 8px;">
+                            ${event.name}
+                        </div>
+                        <div style="font-size: 13px; color: #666; margin: 4px 0;">
+                            📍 ${event.venue}
+                        </div>
+                        <div style="font-size: 13px; color: #666; margin: 4px 0;">
+                            📅 ${new Date(event.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                        </div>
+                        <div style="font-size: 13px; color: #666; margin: 4px 0;">
+                            🚗 ${event.spots} spots available
+                        </div>
+                        <div style="color: #00854D; font-weight: bold; font-size: 20px; margin-top: 10px;">
+                            $${event.price}
+                        </div>
+                        <button onclick="bookParking(${event.id})" style="background: #003594; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; margin-top: 10px; width: 100%;">
+                            Reserve Parking
+                        </button>
+                    </div>
+                `
+            });
+
+            marker.addListener('click', () => {
+                infoWindow.open(map, marker);
+            });
+
+            markers.push(marker);
+        }
+
+        // Populate events grid
+        function populateEventsGrid(eventsToShow = events) {
+            const eventsGrid = document.getElementById('eventsGrid');
+            eventsGrid.innerHTML = ''; // Clear existing content
+
+            eventsToShow.forEach(event => {
+                const card = createEventCard(event, true);
+                eventsGrid.appendChild(card);
+            });
+        }
+
+        // Populate events list in sidebar
+        function populateEventsList(eventsToShow = events.slice(0, 6)) {
+            const eventsList = document.getElementById('eventsList');
+            eventsList.innerHTML = ''; // Clear existing content
+
+            eventsToShow.forEach(event => {
+                const card = createEventCard(event, false);
+                eventsList.appendChild(card);
+            });
+        }
+
+        // Zoom to specific event location
+        function zoomToEvent(lat, lng) {
+            if (map) {
+                map.setCenter({ lat, lng });
+                map.setZoom(13);
+                
+                // Scroll to map
+                document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        // Set map view
+        function setMapView(view) {
+            const buttons = document.querySelectorAll('.toggle-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (view === 'all') {
+                map.setCenter({ lat: 32.7767, lng: -96.7970 });
+                map.setZoom(5);
+            } else {
+                map.setCenter({ lat: 32.7767, lng: -96.7970 });
+                map.setZoom(10);
+            }
+        }
+
+        // Book parking function with security validation
+        function bookParking(eventId) {
+            // SECURITY: Validate input
+            if (typeof eventId !== 'number' || eventId < 1 || eventId > 1000) {
+                console.error('Invalid event ID');
+                return;
+            }
+
+            const event = events.find(e => e.id === eventId);
+            if (event) {
+                // SECURITY: Use alert for demo only - replace with secure modal/redirect
+                const message = `Booking parking for: ${sanitizeHTML(event.name)}\n\nPrice: $${event.price}\nSpots Available: ${event.spots}\n\nThis would connect to your booking/payment system.`;
+                alert(message);
+                // Replace with your actual booking system integration
+            }
+        }
+
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            populateEventsList();
+            populateEventsGrid();
+            
+            // Load Google Maps
+            if (GOOGLE_MAPS_API_KEY !== 'YOUR_API_KEY_HERE') {
+                loadGoogleMaps();
+            } else {
+                // Display message on map div
+                document.getElementById('map').innerHTML = `
+                    <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #f0f0f0; border-radius: 8px;">
+                        <div style="text-align: center; padding: 40px;">
+                            <h3 style="color: #003594; margin-bottom: 15px;">Google Maps API Key Required</h3>
+                            <p style="color: #666; margin-bottom: 10px;">Please add your Google Maps API key to activate the map.</p>
+                            <p style="color: #999; font-size: 14px;">Edit line 172 in the HTML file and replace 'YOUR_API_KEY_HERE' with your actual API key.</p>
+                            <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank" style="color: #003594; text-decoration: underline; font-size: 14px;">Get API Key</a>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Search input listener with security
+            document.getElementById('search').addEventListener('input', function(e) {
+                const rawSearchTerm = e.target.value;
+                const searchTerm = sanitizeSearchInput(rawSearchTerm).toLowerCase();
+
+                if (searchTerm === '') {
+                    populateEventsGrid();
+                    populateEventsList();
+                } else {
+                    const filtered = events.filter(event =>
+                        event.name.toLowerCase().includes(searchTerm) ||
+                        event.location.toLowerCase().includes(searchTerm) ||
+                        event.venue.toLowerCase().includes(searchTerm) ||
+                        event.category.toLowerCase().includes(searchTerm)
+                    );
+
+                    if (filtered.length > 0) {
+                        populateEventsGrid(filtered);
+                    } else {
+                        const eventsGrid = document.getElementById('eventsGrid');
+                        eventsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">No events found matching your search.</div>';
+                    }
+                }
+            });
+
+            // Category filter with security
+            document.getElementById('category').addEventListener('change', function(e) {
+                const category = e.target.value;
+                if (category === 'all') {
+                    populateEventsGrid();
+                } else {
+                    const filtered = events.filter(event => event.category === category);
+                    populateEventsGrid(filtered);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
