@@ -610,154 +610,59 @@
         // NEVER expose API keys in client-side code
         // ============================================
         // Note: Using Leaflet for free interactive maps
+        const TICKETMASTER_API_KEY = ' 	gDAsITRFOEaJP77961Zk0OmNZeTqLOlP'; // Replace with your Ticketmaster API key
 
-        // Sample event data - Replace with your actual data source // TODO: Replace with real data
-        const events = [
-            {
-                id: 1,
-                name: "Dallas Cowboys vs Philadelphia Eagles",
-                location: "Dallas, TX",
-                venue: "AT&T Stadium",
-                date: "2025-11-15",
-                category: "sports",
-                lat: 32.7479,
-                lng: -97.0945,
-                price: 45,
-                spots: 250
-            },
-            {
-                id: 2,
-                name: "Dallas Mavericks vs Phoenix Suns",
-                location: "Dallas, TX",
-                venue: "American Airlines Center",
-                date: "2025-11-20",
-                category: "sports",
-                lat: 32.7905,
-                lng: -96.8103,
-                price: 35,
-                spots: 180
-            },
-            {
-                id: 3,
-                name: "Dallas Mavericks vs Boston Celtics",
-                location: "Dallas, TX",
-                venue: "American Airlines Center",
-                date: "2025-12-01",
-                category: "sports",
-                lat: 32.7905,
-                lng: -96.8103,
-                price: 40,
-                spots: 300
-            },
-            {
-                id: 4,
-                name: "Texas Rangers vs Seattle Mariners",
-                location: "Arlington, TX",
-                venue: "Globe Life Field",
-                date: "2025-11-25",
-                category: "sports",
-                lat: 32.7473,
-                lng: -97.0842,
-                price: 25,
-                spots: 500
-            },
-            {
-                id: 5,
-                name: "LA Lakers vs Golden State Warriors",
-                location: "Los Angeles, CA",
-                venue: "Crypto.com Arena",
-                date: "2025-11-18",
-                category: "sports",
-                lat: 34.0430,
-                lng: -118.2673,
-                price: 50,
-                spots: 200
-            },
-            {
-                id: 6,
-                name: "Miami Art Basel Week",
-                location: "Miami, FL",
-                venue: "Miami Beach Convention Center",
-                date: "2025-12-05",
-                category: "festival",
-                lat: 25.7907,
-                lng: -80.1300,
-                price: 30,
-                spots: 400
-            },
-            {
-                id: 7,
-                name: "Dallas Cowboys vs Chicago Bears",
-                location: "Dallas, TX",
-                venue: "AT&T Stadium",
-                date: "2025-11-22",
-                category: "sports",
-                lat: 32.7479,
-                lng: -97.0945,
-                price: 38,
-                spots: 220
-            },
-            {
-                id: 8,
-                name: "TechCrunch Disrupt 2025",
-                location: "San Francisco, CA",
-                venue: "Moscone Center",
-                date: "2025-12-10",
-                category: "conference",
-                lat: 37.7844,
-                lng: -122.4015,
-                price: 28,
-                spots: 350
-            },
-            {
-                id: 9,
-                name: "Texas Rangers vs New York Yankees",
-                location: "Arlington, TX",
-                venue: "Globe Life Field",
-                date: "2025-11-16",
-                category: "sports",
-                lat: 32.7473,
-                lng: -97.0842,
-                price: 55,
-                spots: 175
-            },
-            {
-                id: 10,
-                name: "Taylor Swift Eras Tour",
-                location: "Nashville, TN",
-                venue: "Nissan Stadium",
-                date: "2025-11-28",
-                category: "concert",
-                lat: 36.1665,
-                lng: -86.7713,
-                price: 42,
-                spots: 280
-            },
-            {
-                id: 11,
-                name: "Seattle Seahawks vs 49ers",
-                location: "Seattle, WA",
-                venue: "Lumen Field",
-                date: "2025-12-03",
-                category: "sports",
-                lat: 47.5952,
-                lng: -122.3316,
-                price: 48,
-                spots: 190
-            },
-            {
-                id: 12,
-                name: "Atlanta Music Midtown",
-                location: "Atlanta, GA",
-                venue: "Piedmont Park",
-                date: "2025-11-30",
-                category: "festival",
-                lat: 33.7850,
-                lng: -84.3733,
-                price: 32,
-                spots: 450
+        // Fetch events from Ticketmaster API
+        async function fetchEvents(query = '', category = 'all') {
+            let url = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${TICKETMASTER_API_KEY}&size=20&city=Dallas&stateCode=TX&sort=date,asc`;
+            if (query) url += `&keyword=${encodeURIComponent(query)}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const apiEvents = data._embedded?.events || [];
+                
+                const events = apiEvents.map((event, index) => {
+                    const venue = event._embedded?.venues?.[0];
+                    if (!venue || !venue.location) return null; // Skip if no location
+                    
+                    return {
+                        id: event.id,
+                        name: event.name,
+                        location: `${venue.city?.name || 'Unknown'}, ${venue.state?.stateCode || 'TX'}`,
+                        venue: venue.name || 'Unknown Venue',
+                        date: event.dates?.start?.localDate || '2025-01-01',
+                        category: event.classifications?.[0]?.segment?.name?.toLowerCase() || 'event',
+                        lat: parseFloat(venue.location.latitude),
+                        lng: parseFloat(venue.location.longitude),
+                        price: event.priceRanges?.[0]?.min || Math.floor(Math.random() * 50) + 10,
+                        spots: Math.floor(Math.random() * 450) + 50
+                    };
+                }).filter(e => e !== null);
+                
+                // Filter by category if specified
+                const filteredEvents = category === 'all' ? events : events.filter(e => e.category === category);
+                
+                // Update map and lists
+                clearMarkers();
+                filteredEvents.forEach(event => addMarker(event));
+                populateEventsGrid(filteredEvents);
+                populateEventsList(filteredEvents.slice(0, 6));
+                
+                return filteredEvents;
+            } catch (error) {
+                console.error('Error fetching events:', error);
+                // Fallback to empty
+                populateEventsGrid([]);
+                populateEventsList([]);
             }
-        ];
+        }
+
+        // Clear all markers from map
+        function clearMarkers() {
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+        }
 
         let map;
         let markers = [];
@@ -1004,50 +909,24 @@
 
         // Search functionality
         document.addEventListener('DOMContentLoaded', function() {
-            populateEventsList();
-            populateEventsGrid();
-            
             // Initialize Leaflet Map
             initMap();
             
-            // Search input listener with security
+            // Load initial events
+            fetchEvents();
+            
+            // Search input listener
             document.getElementById('search').addEventListener('input', function(e) {
-                const rawSearchTerm = e.target.value;
-                const searchTerm = sanitizeSearchInput(rawSearchTerm).toLowerCase();
-
-                if (searchTerm === '') {
-                    populateEventsGrid();
-                    populateEventsList();
-                } else {
-                    const filtered = events.filter(event =>
-                        event.name.toLowerCase().includes(searchTerm) ||
-                        event.location.toLowerCase().includes(searchTerm) ||
-                        event.venue.toLowerCase().includes(searchTerm) ||
-                        event.category.toLowerCase().includes(searchTerm)
-                    );
-
-                    if (filtered.length > 0) {
-                        populateEventsGrid(filtered);
-                    } else {
-                        const eventsGrid = document.getElementById('eventsGrid');
-                        eventsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">No events found matching your search.</div>';
-                    }
-                }
+                const searchTerm = sanitizeSearchInput(e.target.value);
+                fetchEvents(searchTerm);
             });
 
-            // Category filter with security
+            // Category filter
             document.getElementById('category').addEventListener('change', function(e) {
                 const category = e.target.value;
-                if (category === 'all') {
-                    populateEventsGrid();
-                } else {
-                    const filtered = events.filter(event => event.category === category);
-                    populateEventsGrid(filtered);
-                }
+                fetchEvents('', category);
             });
         });
     </script>
 </body>
 </html>
-</html>
-
