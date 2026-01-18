@@ -3,12 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- SECURITY: Add these headers to your server configuration -->
-    <!-- Content-Security-Policy: default-src 'self'; script-src 'self' https://maps.googleapis.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.googleapis.com https://*.gstatic.com; connect-src 'self' https://maps.googleapis.com; -->
-    <!-- X-Frame-Options: DENY -->
-    <!-- X-Content-Type-Options: nosniff -->
-    <!-- Referrer-Policy: strict-origin-when-cross-origin -->
-    <!-- Permissions-Policy: geolocation=(), microphone=(), camera=() -->
+
     <title>Event Parking USA - Premium Parking Solutions</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -543,8 +538,8 @@
             <h2>Find Parking</h2>
             
             <div class="filter-group">
-                <label for="search">Search Events or Location</label>
-                <input type="text" id="search" placeholder="Dallas, TX or Cowboys Game">
+                <label for="search">Find Parking or Events</label>
+                <input type="text" id="search" placeholder="Enter event name, team, or venue">
             </div>
 
             <div class="filter-group">
@@ -610,12 +605,15 @@
         // NEVER expose API keys in client-side code
         // ============================================
         // Note: Using Leaflet for free interactive maps
-        const TICKETMASTER_API_KEY = ' 	gDAsITRFOEaJP77961Zk0OmNZeTqLOlP'; // Replace with your Ticketmaster API key
+        const TICKETMASTER_API_KEY = 'gDAsITRFOEaJP77961Zk0OmNZeTqLOlP'; // Replace with your Ticketmaster API key
 
         // Fetch events from Ticketmaster API
         async function fetchEvents(query = '', category = 'all') {
-            let url = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${TICKETMASTER_API_KEY}&size=20&city=Dallas&stateCode=TX&sort=date,asc`;
-            if (query) url += `&keyword=${encodeURIComponent(query)}`;
+            let apiUrl = `https://app.ticketmaster.com/discovery/v2/events.json?apikey=${TICKETMASTER_API_KEY}&size=20&city=Dallas&stateCode=TX&sort=date,asc`;
+            if (query) apiUrl += `&keyword=${encodeURIComponent(query)}`;
+            
+            // Use CORS proxy for development (visit https://cors-anywhere.herokuapp.com/ and click "Request temporary access")
+            const url = `https://cors-anywhere.herokuapp.com/${apiUrl}`;
             
             try {
                 const response = await fetch(url);
